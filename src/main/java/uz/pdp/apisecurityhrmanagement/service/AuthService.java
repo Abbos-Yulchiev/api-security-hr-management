@@ -57,6 +57,8 @@ public class AuthService implements UserDetailsService {
         user.setFirstName(registerDTO.getFirstName());
         user.setLastName(registerDTO.getLastName());
         user.setEmail(registerDTO.getEmail());
+        user.setPosition(registerDTO.getRoleName());
+        user.setEnabled(true);
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setRoles(Collections.singleton(roleRepository.findByRoleName(RoleName.USER)));
 
@@ -86,7 +88,7 @@ public class AuthService implements UserDetailsService {
 
     public ApiResponse verifyEmail(String emailCode, String email) {
 
-        Optional<User> optionalUser = userRepository.findByEmailAndEmailCode(email,emailCode);
+        Optional<User> optionalUser = userRepository.findByEmailAndEmailCode(email, emailCode);
         if (optionalUser.isPresent()) {
 
             User user = optionalUser.get();

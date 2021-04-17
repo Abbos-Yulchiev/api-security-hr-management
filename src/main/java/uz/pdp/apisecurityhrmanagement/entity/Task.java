@@ -4,14 +4,13 @@ package uz.pdp.apisecurityhrmanagement.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import uz.pdp.apisecurityhrmanagement.entity.enums.TaskStatus;
 
 import javax.persistence.*;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
@@ -25,7 +24,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @CreationTimestamp
+
     @Column(updatable = false)
     private Timestamp createdAt;
 
@@ -51,10 +50,10 @@ public class Task {
     private TaskStatus status;
 
     @ManyToOne(optional = false)
-    private User taskTaker;//qabul qiluvchi
+    private User taskTaker;
 
     private Date completedDate;
 
     @ManyToOne(optional = false)
-    private User taskGiver;//vazifa beruvchi
+    private User taskGiver;
 }

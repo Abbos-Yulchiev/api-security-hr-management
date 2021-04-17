@@ -2,7 +2,6 @@ package uz.pdp.apisecurityhrmanagement.payload;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import uz.pdp.apisecurityhrmanagement.entity.enums.RoleName;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
