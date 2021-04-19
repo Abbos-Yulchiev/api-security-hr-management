@@ -31,15 +31,6 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    /**
-     * Get one user
-     */
-    @GetMapping(value = "/{userId}")
-    public ResponseEntity<?> getUser(@PathVariable UUID userId, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = userService.getUser(userId);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
-    }
-
     @PostMapping
     public HttpEntity<?> addEmployee(@RequestBody RegisterDTO registerDTO, HttpServletRequest httpServletRequest) {
 

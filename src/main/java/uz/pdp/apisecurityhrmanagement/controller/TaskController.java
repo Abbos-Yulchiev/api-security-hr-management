@@ -26,14 +26,14 @@ public class TaskController {
     }
 
     @PostMapping
-    public HttpEntity<?> addTask(TaskDTO taskDTO, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = taskService.addTask(taskDTO, httpServletRequest);
+    public HttpEntity<?> addTask(TaskDTO taskDTO) {
+        ApiResponse apiResponse = taskService.addTask(taskDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
     @DeleteMapping(value = "/{taskId}")
-    public HttpEntity<?> deleteTask(@PathVariable UUID taskId, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = taskService.delete(taskId, httpServletRequest);
+    public HttpEntity<?> deleteTask(@PathVariable UUID taskId) {
+        ApiResponse apiResponse = taskService.delete(taskId);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 

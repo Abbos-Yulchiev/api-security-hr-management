@@ -1,7 +1,10 @@
 package uz.pdp.apisecurityhrmanagement.service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.pdp.apisecurityhrmanagement.entity.Tourniquet;
+import uz.pdp.apisecurityhrmanagement.entity.User;
 import uz.pdp.apisecurityhrmanagement.payload.ApiResponse;
 import uz.pdp.apisecurityhrmanagement.payload.TourniquetDTO;
 import uz.pdp.apisecurityhrmanagement.repository.TourniquetRepository;
@@ -24,9 +27,9 @@ public class TourniquetService {
 
     public ApiResponse add(TourniquetDTO dto, HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
 
         if (!role.equals("DIRECTOR")) return new ApiResponse("You can not add new tourniquet", false);
         Tourniquet tourniquet = new Tourniquet();
@@ -36,9 +39,10 @@ public class TourniquetService {
     }
 
     public ApiResponse edit(Integer id, TourniquetDTO tourniquetDTO, HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
 
         if (!role.equals("DIRECTOR")) return new ApiResponse("You can not edit Tourniquet", false);
         Optional<Tourniquet> optional = tourniquetRepository.findById(id);
@@ -50,11 +54,12 @@ public class TourniquetService {
     }
 
     public ApiResponse delete(Integer id, HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
 
-        if (!role.equals("ROLE_DIRECTOR")) return new ApiResponse("You can not delete turniket", false);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+
+        if (!role.equals("ROLE_DIRECTOR")) return new ApiResponse("You can not delete Tourniquet", false);
         Optional<Tourniquet> optionalTourniquet = tourniquetRepository.findById(id);
         if (!optionalTourniquet.isPresent()) return new ApiResponse("Invalid Tourniquet ID!", false);
         tourniquetRepository.deleteById(id);
@@ -62,9 +67,10 @@ public class TourniquetService {
     }
 
     public ApiResponse getAll(HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
 
         if (!role.equals("DIRECTOR")) return new ApiResponse("You can not check Tourniquet list", false);
         return new ApiResponse("Tourniquets List", true, tourniquetRepository.findAll());

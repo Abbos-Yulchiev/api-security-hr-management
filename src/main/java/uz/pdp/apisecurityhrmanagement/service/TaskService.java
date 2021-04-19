@@ -1,5 +1,7 @@
 package uz.pdp.apisecurityhrmanagement.service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.pdp.apisecurityhrmanagement.entity.Role;
 import uz.pdp.apisecurityhrmanagement.entity.Task;
@@ -39,29 +41,28 @@ public class TaskService {
 
     public ApiResponse getTasksList(HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
 
-        List<Task> taskTaker = taskRepository.findByTaskTaker(email);
+        List<Task> taskTaker = taskRepository.findByTaskTaker(user.getEmail());
         if (taskTaker.isEmpty())
             return new ApiResponse("There is a not Task for you yet", true);
         return new ApiResponse("Your tasks: ", true, taskTaker);
     }
 
-    public ApiResponse addTask(TaskDTO taskDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse addTask(TaskDTO taskDTO) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
 
         if (role.equalsIgnoreCase("user")) return new ApiResponse("Your position is not allow to give a task!", false);
         Optional<User> optionalTaskTaker = userRepository.findByEmail(taskDTO.getTaskTakerEmail());
         if (!optionalTaskTaker.isPresent()) return new
                 ApiResponse("Invalid Task taker Email!", false);
+
         Set<Role> taskTakerRoles = optionalTaskTaker.get().getRoles();
+
         for (Role taskTakerRole : taskTakerRoles) {
             if (role.equalsIgnoreCase("user") && taskTakerRole.equals(roleRepository.findByRoleName(RoleName.USER))) {
                 return new ApiResponse("Your position is not allow to give a task to anyone!", false);
@@ -76,27 +77,27 @@ public class TaskService {
         task.setDeadline(taskDTO.getDeadline());
         task.setDescription(taskDTO.getDescription());
         task.setName(taskDTO.getName());
-        task.setTaskGiver(userRepository.findByEmail(email).get());
+        task.setTaskGiver(user);
         task.setStatus(TaskStatus.NEW);
 
-        String emailBody = "You take a task from " + userRepository.findByEmail(email).get().getFirstName() +
+        String emailBody = "You take a task from " + user.getFirstName() +
                 "Task name:" + taskDTO.getName() + "\nTask description: " + taskDTO.getDescription() + ".Task is available until: " + taskDTO.getDeadline();
         String emailSubject = "You have been assigned a task.";
-        authService.emailForTask(taskDTO.getTaskTakerEmail(), emailBody, emailSubject);
+//        authService.emailForTask(taskDTO.getTaskTakerEmail(), emailBody, emailSubject);
         taskRepository.save(task);
         return new ApiResponse("New Task added and Task taker was informed by sending email.", true);
     }
-    public ApiResponse delete(UUID id, HttpServletRequest httpServletRequest){
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
+    public ApiResponse delete(UUID id) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
 
         if (role.equals("ROLE_STAFF")) return new ApiResponse("c", false);
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (!optionalTask.isPresent()) return new ApiResponse("Invalid Task Id", false);
-        if (!optionalTask.get().getTaskGiver().getEmail().equals(email))
+        if (!optionalTask.get().getTaskGiver().getEmail().equals(user.getEmail()))
             return new ApiResponse("Your position is not allow to delete task.", false);
 
         taskRepository.deleteById(id);

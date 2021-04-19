@@ -1,5 +1,8 @@
 package uz.pdp.apisecurityhrmanagement.service;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.pdp.apisecurityhrmanagement.entity.SalaryHistory;
 import uz.pdp.apisecurityhrmanagement.entity.User;
@@ -20,20 +23,23 @@ public class SalaryService {
     final JwtProvider jwtProvider;
     final UserRepository userRepository;
     final SalaryRepository salaryRepository;
+    final AuthenticationManager authenticationManager;
 
-    public SalaryService(JwtProvider jwtProvider, UserRepository userRepository, SalaryRepository salaryRepository) {
+    public SalaryService(JwtProvider jwtProvider, UserRepository userRepository,
+                         SalaryRepository salaryRepository, AuthenticationManager authenticationManager) {
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
         this.salaryRepository = salaryRepository;
+        this.authenticationManager = authenticationManager;
     }
 
     public ApiResponse addSalary(SalaryDTO salaryDTO, HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
-        String position = userRepository.findByEmail(email).get().getPosition();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+        String position = user.getPosition();
+
         if ((role.equalsIgnoreCase("user")) || ((role.equalsIgnoreCase("director") && !position.equals("hr_manager"))))
             return new ApiResponse("You position is not allow to do this operation!", false);
         Optional<User> optionalUser = userRepository.findById(salaryDTO.getUserId());
@@ -51,11 +57,11 @@ public class SalaryService {
 
     public ApiResponse editSalaryByTask(UUID userId, SalaryDTO salaryDTO, HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
-        String position = userRepository.findByEmail(email).get().getPosition();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+        String position = user.getPosition();
+
         if ((role.equalsIgnoreCase("user")) || ((role.equalsIgnoreCase("director") && !position.equals("hr_manager"))))
             return new ApiResponse("You position is not allow to do this operation!", false);
         Optional<User> optionalUser = userRepository.findById(salaryDTO.getUserId());
@@ -74,11 +80,12 @@ public class SalaryService {
     }
 
     public ApiResponse getUserSalary(UUID userId, HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
-        String position = userRepository.findByEmail(email).get().getPosition();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+        String position = user.getPosition();
+
         if ((role.equalsIgnoreCase("user")) || ((role.equalsIgnoreCase("director") && !position.equals("hr_manager"))))
             return new ApiResponse("You position is not allow to do this operation!", false);
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -89,11 +96,11 @@ public class SalaryService {
 
     public ApiResponse deleteUserSalary(UUID userId, HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
-        String position = userRepository.findByEmail(email).get().getPosition();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+        String position = user.getPosition();
+
         if ((role.equalsIgnoreCase("user")) || ((role.equalsIgnoreCase("director") && !position.equals("hr_manager"))))
             return new ApiResponse("You position is not allow to do this operation!", false);
         Optional<User> optionalUser = userRepository.findById(userId);

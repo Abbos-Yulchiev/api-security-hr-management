@@ -1,5 +1,7 @@
 package uz.pdp.apisecurityhrmanagement.service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.pdp.apisecurityhrmanagement.entity.User;
@@ -72,55 +74,51 @@ public class UserService {
 
     public ApiResponse editEmployeeByManagerAndHR(String username, PasswordDTO passwordDTO, HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
 
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
         if (!role.equals("USER"))
             return new ApiResponse("Director or HR-Manager can not  edit user inform in this  way! Only user can.", false);
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
         if (!optionalUser.isPresent())
             return new ApiResponse("Invalid email address!", false);
-        User user = optionalUser.get();
+        user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
         userRepository.save(user);
         return new ApiResponse("User password edited.", true);
     }
 
     public ApiResponse getUserList(HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+        String position = user.getPosition();
+
+        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
         if (!optionalUser.isPresent())
             return new ApiResponse("Invalid email Address!", false);
-        String position = optionalUser.get().getPosition();
+
         if (role.equals("USER") || (role.equals("DIRECTOR") && !position.equals("HR_MANAGER")))
             return new ApiResponse("Your position do not allow get USer information!", false);
         List<User> userList = userRepository.findAll();
         return new ApiResponse("User List", true, userList);
     }
 
-    public ApiResponse getUser(UUID userId) {
-        return null;
-    }
 
     public ApiResponse deleteUser(String username, HttpServletRequest httpServletRequest) {
 
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String role = String.valueOf(user.getRoles());
+        String position = user.getPosition();
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
         if (!optionalUser.isPresent())
             return new ApiResponse("Invalid User name!", false);
 
-        String position = optionalUser.get().getPosition();
         if ((role.equals("ROLE_STAFF")) || ((role.equals("ROLE_MANAGER") && !position.equals("HR_MANAGER"))))
             return new ApiResponse("You can not delete employee information", false);
         userRepository.deleteById(optionalUser.get().getId());
