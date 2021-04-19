@@ -12,7 +12,6 @@ import uz.pdp.apisecurityhrmanagement.repository.SalaryRepository;
 import uz.pdp.apisecurityhrmanagement.repository.UserRepository;
 import uz.pdp.apisecurityhrmanagement.security.JwtProvider;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +32,7 @@ public class SalaryService {
         this.authenticationManager = authenticationManager;
     }
 
-    public ApiResponse addSalary(SalaryDTO salaryDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse addSalary(SalaryDTO salaryDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -55,7 +54,7 @@ public class SalaryService {
         return new ApiResponse("New salary added", true);
     }
 
-    public ApiResponse editSalaryByTask(UUID userId, SalaryDTO salaryDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse editSalaryByTask(UUID userId, SalaryDTO salaryDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -79,7 +78,7 @@ public class SalaryService {
         return new ApiResponse("Salary edited", true);
     }
 
-    public ApiResponse getUserSalary(UUID userId, HttpServletRequest httpServletRequest) {
+    public ApiResponse getUserSalary(UUID userId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -94,7 +93,7 @@ public class SalaryService {
         return new ApiResponse("User Salary history:", true, historyList);
     }
 
-    public ApiResponse deleteUserSalary(UUID userId, HttpServletRequest httpServletRequest) {
+    public ApiResponse deleteUserSalary(UUID userId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();

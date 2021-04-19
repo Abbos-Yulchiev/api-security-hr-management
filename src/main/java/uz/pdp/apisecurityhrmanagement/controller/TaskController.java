@@ -21,8 +21,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public HttpEntity<?> getTasksList(HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(taskService.getTasksList(httpServletRequest));
+    public HttpEntity<?> getTasksList() {
+        return ResponseEntity.ok(taskService.getTasksList());
     }
 
     @PostMapping

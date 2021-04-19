@@ -10,7 +10,6 @@ import uz.pdp.apisecurityhrmanagement.payload.RegisterDTO;
 import uz.pdp.apisecurityhrmanagement.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -26,8 +25,8 @@ public class UserController {
      * Getting all users
      */
     @GetMapping
-    public ResponseEntity<?> getUserList(HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = userService.getUserList(httpServletRequest);
+    public ResponseEntity<?> getUserList() {
+        ApiResponse apiResponse = userService.getUserList();
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -40,13 +39,13 @@ public class UserController {
 
     @PutMapping(value = "/{username}")
     public HttpEntity<?> editEmployee(@PathVariable String username, @RequestBody PasswordDTO passwordDTO, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = userService.editEmployeeByManagerAndHR(username, passwordDTO, httpServletRequest);
+        ApiResponse apiResponse = userService.editEmployeeByManagerAndHR(username, passwordDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.ACCEPTED : HttpStatus.CONFLICT).body(apiResponse);
     }
 
     @DeleteMapping(value = "/{username}")
-    public HttpEntity<?> deleteUser(@PathVariable String username, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = userService.deleteUser(username, httpServletRequest);
+    public HttpEntity<?> deleteUser(@PathVariable String username) {
+        ApiResponse apiResponse = userService.deleteUser(username);
         return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
     }
 

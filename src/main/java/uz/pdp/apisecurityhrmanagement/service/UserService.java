@@ -72,7 +72,7 @@ public class UserService {
         return new ApiResponse("User successfully registered. Verify your email.", true);
     }
 
-    public ApiResponse editEmployeeByManagerAndHR(String username, PasswordDTO passwordDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse editEmployeeByManagerAndHR(String username, PasswordDTO passwordDTO ) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -81,7 +81,7 @@ public class UserService {
         if (!role.equals("USER"))
             return new ApiResponse("Director or HR-Manager can not  edit user inform in this  way! Only user can.", false);
 
-        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(username);
         if (!optionalUser.isPresent())
             return new ApiResponse("Invalid email address!", false);
         user = optionalUser.get();
@@ -90,7 +90,7 @@ public class UserService {
         return new ApiResponse("User password edited.", true);
     }
 
-    public ApiResponse getUserList(HttpServletRequest httpServletRequest) {
+    public ApiResponse getUserList() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -108,14 +108,14 @@ public class UserService {
     }
 
 
-    public ApiResponse deleteUser(String username, HttpServletRequest httpServletRequest) {
+    public ApiResponse deleteUser(String username) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         String role = String.valueOf(user.getRoles());
         String position = user.getPosition();
 
-        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(username);
         if (!optionalUser.isPresent())
             return new ApiResponse("Invalid User name!", false);
 

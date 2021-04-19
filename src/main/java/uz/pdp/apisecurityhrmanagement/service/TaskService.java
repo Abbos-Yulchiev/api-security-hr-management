@@ -39,7 +39,7 @@ public class TaskService {
         this.authService = authService;
     }
 
-    public ApiResponse getTasksList(HttpServletRequest httpServletRequest) {
+    public ApiResponse getTasksList() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -83,7 +83,7 @@ public class TaskService {
         String emailBody = "You take a task from " + user.getFirstName() +
                 "Task name:" + taskDTO.getName() + "\nTask description: " + taskDTO.getDescription() + ".Task is available until: " + taskDTO.getDeadline();
         String emailSubject = "You have been assigned a task.";
-//        authService.emailForTask(taskDTO.getTaskTakerEmail(), emailBody, emailSubject);
+        authService.emailForTask(taskDTO.getTaskTakerEmail(), emailBody, emailSubject);
         taskRepository.save(task);
         return new ApiResponse("New Task added and Task taker was informed by sending email.", true);
     }

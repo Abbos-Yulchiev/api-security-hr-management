@@ -21,27 +21,27 @@ public class TourniquetController {
 
 
     @PostMapping
-    public HttpEntity<?> add(@RequestBody TourniquetDTO tourniquetDTO, HttpServletRequest httpServletRequest) {
+    public HttpEntity<?> add(@RequestBody TourniquetDTO tourniquetDTO) {
 
-        ApiResponse apiResponse = tourniquetService.add(tourniquetDTO, httpServletRequest);
+        ApiResponse apiResponse = tourniquetService.add(tourniquetDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
     }
 
     @PutMapping("/{id}")
-    public HttpEntity<?> edit(@RequestBody TourniquetDTO tourniquetDTO, HttpServletRequest httpServletRequest, @PathVariable Integer id) {
+    public HttpEntity<?> edit(@PathVariable Integer id, @RequestBody TourniquetDTO tourniquetDTO) {
 
-        ApiResponse apiResponse = tourniquetService.edit(id, tourniquetDTO, httpServletRequest);
+        ApiResponse apiResponse = tourniquetService.edit(id, tourniquetDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 202 : 409).body(apiResponse);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id, HttpServletRequest httpServletRequest) {
-        ApiResponse response = tourniquetService.delete(id, httpServletRequest);
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        ApiResponse response = tourniquetService.delete(id);
         return ResponseEntity.status(response.isSuccess() ? 202 : 409).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(tourniquetService.getAll(httpServletRequest));
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(tourniquetService.getAll());
     }
 }

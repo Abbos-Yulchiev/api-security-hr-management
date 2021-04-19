@@ -21,28 +21,28 @@ public class SalaryController {
     }
 
     @GetMapping("/{userId}")
-    public HttpEntity<?> getUserSalary(@PathVariable UUID userId, HttpServletRequest httpServletRequest) {
+    public HttpEntity<?> getUserSalary(@PathVariable UUID userId) {
 
-        ApiResponse apiResponse = salaryService.getUserSalary(userId, httpServletRequest);
+        ApiResponse apiResponse = salaryService.getUserSalary(userId);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
     @PostMapping
-    public HttpEntity<?> addSalary(@RequestBody SalaryDTO salaryDTO, HttpServletRequest httpServletRequest) {
+    public HttpEntity<?> addSalary(@RequestBody SalaryDTO salaryDTO) {
 
-        ApiResponse apiResponse = salaryService.addSalary(salaryDTO, httpServletRequest);
+        ApiResponse apiResponse = salaryService.addSalary(salaryDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
     @PutMapping("/{userId}")
-    public HttpEntity<?> editSalaryByTask(@PathVariable UUID userId, @RequestBody SalaryDTO salaryDTO, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = salaryService.editSalaryByTask(userId, salaryDTO, httpServletRequest);
+    public HttpEntity<?> editSalaryByTask(@PathVariable UUID userId, @RequestBody SalaryDTO salaryDTO) {
+        ApiResponse apiResponse = salaryService.editSalaryByTask(userId, salaryDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @DeleteMapping(value = "/{userId}")
-    public HttpEntity<?> deleteUser(@PathVariable UUID userId, HttpServletRequest httpServletRequest) {
-        ApiResponse apiResponse = salaryService.deleteUserSalary(userId, httpServletRequest);
+    public HttpEntity<?> deleteUser(@PathVariable UUID userId) {
+        ApiResponse apiResponse = salaryService.deleteUserSalary(userId);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 }

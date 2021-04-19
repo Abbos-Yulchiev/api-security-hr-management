@@ -25,7 +25,7 @@ public class TourniquetService {
     }
 
 
-    public ApiResponse add(TourniquetDTO dto, HttpServletRequest httpServletRequest) {
+    public ApiResponse add(TourniquetDTO dto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -38,7 +38,7 @@ public class TourniquetService {
         return new ApiResponse("New tourniquet added", true);
     }
 
-    public ApiResponse edit(Integer id, TourniquetDTO tourniquetDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse edit(Integer id, TourniquetDTO tourniquetDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -53,7 +53,7 @@ public class TourniquetService {
         return new ApiResponse("Tourniquet edited", true);
     }
 
-    public ApiResponse delete(Integer id, HttpServletRequest httpServletRequest) {
+    public ApiResponse delete(Integer id) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -66,7 +66,7 @@ public class TourniquetService {
         return new ApiResponse("Tourniquet deleted", true);
     }
 
-    public ApiResponse getAll(HttpServletRequest httpServletRequest) {
+    public ApiResponse getAll() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
