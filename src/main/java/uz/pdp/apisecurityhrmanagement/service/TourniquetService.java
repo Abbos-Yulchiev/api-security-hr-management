@@ -10,7 +10,6 @@ import uz.pdp.apisecurityhrmanagement.payload.TourniquetDTO;
 import uz.pdp.apisecurityhrmanagement.repository.TourniquetRepository;
 import uz.pdp.apisecurityhrmanagement.security.JwtProvider;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
@@ -25,7 +24,7 @@ public class TourniquetService {
     }
 
 
-    public ApiResponse add(TourniquetDTO dto) {
+    public ApiResponse add(TourniquetDTO tourniquetDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -33,7 +32,7 @@ public class TourniquetService {
 
         if (!role.equals("DIRECTOR")) return new ApiResponse("You can not add new tourniquet", false);
         Tourniquet tourniquet = new Tourniquet();
-        tourniquet.setLocation(dto.getLocation());
+        tourniquet.setLocation(tourniquetDTO.getLocation());
         tourniquetRepository.save(tourniquet);
         return new ApiResponse("New tourniquet added", true);
     }

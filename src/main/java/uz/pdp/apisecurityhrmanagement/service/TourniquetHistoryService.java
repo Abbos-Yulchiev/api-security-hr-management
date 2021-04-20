@@ -1,5 +1,7 @@
 package uz.pdp.apisecurityhrmanagement.service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.pdp.apisecurityhrmanagement.entity.Tourniquet;
 import uz.pdp.apisecurityhrmanagement.entity.TourniquetHistory;
@@ -30,14 +32,16 @@ public class TourniquetHistoryService {
 
     public ApiResponse addHistory(TourniquetHistoryDTO historyDTO) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
         TourniquetHistory tourniquetHistory = new TourniquetHistory();
         Optional<Tourniquet> optionalTourniquet = tourniquetRepository.findById(historyDTO.getTourniquetId());
         if (!optionalTourniquet.isPresent()) return new ApiResponse("Invalid Tourniquet ID!", false);
-        Optional<User> optionalUser = userRepository.findByEmail(historyDTO.getUsername());
-        if (!optionalUser.isPresent()) return new ApiResponse("Invalid User UD", false);
 
         tourniquetHistory.setTourniquet(optionalTourniquet.get());
-        tourniquetHistory.setUser(optionalUser.get());
+        tourniquetHistory.setUser(user);
+
         if (historyDTO.isGoingIn()) {
             tourniquetHistory.setType(TourniquetType.IN);
         } else {
