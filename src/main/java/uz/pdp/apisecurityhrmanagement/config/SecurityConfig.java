@@ -51,7 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/auth/register",
                         "/api/auth/verifyEmail",
-                        "/api/auth/login").permitAll()
+                        "/api/auth/login",
+                        "/api/tourniquet",
+                        "/api/tourniquetHistory").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
