@@ -17,7 +17,10 @@ public class Tourniquet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String location;
+
+    private boolean status;
 
     @CreationTimestamp
     @Column(updatable = false)

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import uz.pdp.apisecurityhrmanagement.entity.enums.TourniquetType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,9 +22,6 @@ public class TourniquetHistory {
 
     @ManyToOne
     private Tourniquet tourniquet;      //TurniketHistory o'zida  tourniqetni saqlaydi
-
-    @Enumerated(EnumType.STRING)
-    private TourniquetType type;
 
     @CreationTimestamp
     private Timestamp time;

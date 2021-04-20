@@ -1,12 +1,9 @@
 package uz.pdp.apisecurityhrmanagement.service;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.pdp.apisecurityhrmanagement.entity.Tourniquet;
 import uz.pdp.apisecurityhrmanagement.entity.TourniquetHistory;
 import uz.pdp.apisecurityhrmanagement.entity.User;
-import uz.pdp.apisecurityhrmanagement.entity.enums.TourniquetType;
 import uz.pdp.apisecurityhrmanagement.payload.ApiResponse;
 import uz.pdp.apisecurityhrmanagement.payload.TourniquetHistoryDTO;
 import uz.pdp.apisecurityhrmanagement.repository.TourniquetHistoryRepository;
@@ -33,22 +30,27 @@ public class TourniquetHistoryService {
 
     public ApiResponse addHistory(TourniquetHistoryDTO historyDTO) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        Optional<User> optionalUser = userRepository.findById(historyDTO.getUserId());
+        if (!optionalUser.isPresent())
+            return new ApiResponse("Invalid User Id!", false);
 
         TourniquetHistory tourniquetHistory = new TourniquetHistory();
         Optional<Tourniquet> optionalTourniquet = tourniquetRepository.findById(historyDTO.getTourniquetId());
         if (!optionalTourniquet.isPresent()) return new ApiResponse("Invalid Tourniquet ID!", false);
 
         tourniquetHistory.setTourniquet(optionalTourniquet.get());
-        tourniquetHistory.setUser(user);
+        tourniquetHistory.setUser(optionalUser.get());
 
         if (historyDTO.isGoingIn()) {
-            tourniquetHistory.setType(TourniquetType.IN);
+            if (!optionalTourniquet.get().isStatus())
+                return new ApiResponse("You using the tourniquet illegally!", false);
             tourniquetHistory.setEnterDateTime(LocalDateTime.now());
+            optionalTourniquet.get().setStatus(true);
         } else {
-            tourniquetHistory.setType(TourniquetType.OUT);
+            if (optionalTourniquet.get().isStatus())
+                return new ApiResponse("You using the tourniquet illegally!", false);
             tourniquetHistory.setExitDateTime(LocalDateTime.now());
+            optionalTourniquet.get().setStatus(false);
         }
         tourniquetHistoryRepository.save(tourniquetHistory);
         return new ApiResponse("Input and output saved", true);
