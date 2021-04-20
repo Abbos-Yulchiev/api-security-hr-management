@@ -22,9 +22,6 @@ public class Tourniquet {
 
     private boolean status;
 
-    @ManyToOne
-    private User user;
-
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
