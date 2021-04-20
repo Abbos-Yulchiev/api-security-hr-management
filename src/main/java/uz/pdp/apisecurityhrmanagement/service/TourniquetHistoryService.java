@@ -13,6 +13,7 @@ import uz.pdp.apisecurityhrmanagement.repository.TourniquetHistoryRepository;
 import uz.pdp.apisecurityhrmanagement.repository.TourniquetRepository;
 import uz.pdp.apisecurityhrmanagement.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -44,8 +45,10 @@ public class TourniquetHistoryService {
 
         if (historyDTO.isGoingIn()) {
             tourniquetHistory.setType(TourniquetType.IN);
+            tourniquetHistory.setEnterDateTime(LocalDateTime.now());
         } else {
             tourniquetHistory.setType(TourniquetType.OUT);
+            tourniquetHistory.setExitDateTime(LocalDateTime.now());
         }
         tourniquetHistoryRepository.save(tourniquetHistory);
         return new ApiResponse("Input and output saved", true);

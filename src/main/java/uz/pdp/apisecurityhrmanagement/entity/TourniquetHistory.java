@@ -7,7 +7,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import uz.pdp.apisecurityhrmanagement.entity.enums.TourniquetType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class TourniquetHistory {
     private UUID id;
 
     @ManyToOne
-    private Tourniquet tourniquet;
+    private Tourniquet tourniquet;      //TurniketHistory o'zida  tourniqetni saqlaydi
 
     @Enumerated(EnumType.STRING)
     private TourniquetType type;
@@ -28,6 +30,11 @@ public class TourniquetHistory {
     @CreationTimestamp
     private Timestamp time;
 
+    @NotNull
+    private LocalDateTime enterDateTime;   // Entrance time to work
+
+    private LocalDateTime exitDateTime;    // Exit time from work
+
     @ManyToOne
-    private User user;
+    private User user;                  // Tourniketga userni saqalsh uchun
 }
