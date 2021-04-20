@@ -7,5 +7,5 @@ public class TourniquetHistoryDTO {
 
     Integer tourniquetId;
     boolean goingIn;
-    String Username;
+    String user;
 }
