@@ -38,17 +38,6 @@ public class TaskService {
         this.authService = authService;
     }
 
-    public ApiResponse getTasksList() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
-        List<Task> taskTaker = taskRepository.findByTaskTaker(user.getEmail());
-        if (taskTaker.isEmpty())
-            return new ApiResponse("There is a not Task for you yet", true);
-        return new ApiResponse("Your tasks: ", true, taskTaker);
-    }
-
     public ApiResponse addTask(TaskDTO taskDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

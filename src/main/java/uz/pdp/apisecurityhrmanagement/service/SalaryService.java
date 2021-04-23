@@ -92,41 +92,4 @@ public class SalaryService {
         List<SalaryHistory> historyList = salaryRepository.findByUser(userId);
         return new ApiResponse("User Salary history:", true, historyList);
     }
-
-    public ApiResponse deleteUserSalary(UUID userId) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        String role = String.valueOf(user.getRoles());
-        String position = user.getPosition();
-
-        if ((role.equalsIgnoreCase("user")) || ((role.equalsIgnoreCase("director") && !position.equals("hr_manager"))))
-            return new ApiResponse("You position is not allow to do this operation!", false);
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (!optionalUser.isPresent()) return new ApiResponse("Invalid Username ID!", false);
-        Optional<SalaryHistory> optionalSalaryHistory = salaryRepository.findById(userId);
-        if (!optionalSalaryHistory.isPresent())
-            return new ApiResponse("Invalid Salary ID!", false);
-        userRepository.deleteById(userId);
-        return new ApiResponse("User salary deleted!", true);
-    }
-
-/*    public ApiResponse authorization(HttpServletRequest httpServletRequest) {
-
-        ApiResponse apiResponse = null;
-        String token = httpServletRequest.getHeader("Authorization");
-        token = token.substring(7);
-        String role = jwtProvider.getRoleNameFromToken(token);
-        String email = jwtProvider.getEmailFromToken(token);
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (!optionalUser.isPresent())
-            apiResponse = new ApiResponse("Invalid Username ID!", false);
-        String position = optionalUser.get().getPosition();
-
-        if ((role.equalsIgnoreCase("user")) || ((role.equalsIgnoreCase("director") && !position.equals("hr_manager"))))
-            apiResponse = new ApiResponse("You position do not allow to do this operation!", false);
-        return apiResponse;
-    }*/
-
-
 }

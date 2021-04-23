@@ -1,7 +1,6 @@
 package uz.pdp.apisecurityhrmanagement.controller;
 
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.apisecurityhrmanagement.entity.enums.TaskStatus;
@@ -9,7 +8,6 @@ import uz.pdp.apisecurityhrmanagement.payload.ApiResponse;
 import uz.pdp.apisecurityhrmanagement.payload.TaskDTO;
 import uz.pdp.apisecurityhrmanagement.service.TaskService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @RestController
@@ -45,5 +43,4 @@ public class TaskController {
         ApiResponse response = taskService.checkEmployeeTask(employeeId, taskStatus);
         return ResponseEntity.status(response.isSuccess() ? 200 : 409).body(response);
     }
-
 }

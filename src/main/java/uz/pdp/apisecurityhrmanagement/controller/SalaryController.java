@@ -7,7 +7,6 @@ import uz.pdp.apisecurityhrmanagement.payload.ApiResponse;
 import uz.pdp.apisecurityhrmanagement.payload.SalaryDTO;
 import uz.pdp.apisecurityhrmanagement.service.SalaryService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @RestController
@@ -38,11 +37,5 @@ public class SalaryController {
     public HttpEntity<?> editSalaryByTask(@PathVariable UUID userId, @RequestBody SalaryDTO salaryDTO) {
         ApiResponse apiResponse = salaryService.editSalaryByTask(userId, salaryDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
-    }
-
-    @DeleteMapping(value = "/{userId}")
-    public HttpEntity<?> deleteUser(@PathVariable UUID userId) {
-        ApiResponse apiResponse = salaryService.deleteUserSalary(userId);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 }
