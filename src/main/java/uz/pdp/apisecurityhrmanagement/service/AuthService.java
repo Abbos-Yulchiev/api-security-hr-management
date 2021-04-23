@@ -112,6 +112,7 @@ public class AuthService implements UserDetailsService {
             String token = jwtProvider.generateToken(loginDTO.getUsername(), user.getRoles());
             return new ApiResponse("This is token", true, token);
         } catch (BadCredentialsException badCredentialsException) {
+
             return new ApiResponse("Login or password is incorrect", false);
         }
     }
