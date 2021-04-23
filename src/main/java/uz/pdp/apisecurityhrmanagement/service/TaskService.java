@@ -15,7 +15,6 @@ import uz.pdp.apisecurityhrmanagement.repository.TaskRepository;
 import uz.pdp.apisecurityhrmanagement.repository.UserRepository;
 import uz.pdp.apisecurityhrmanagement.security.JwtProvider;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,7 +87,7 @@ public class TaskService {
         return new ApiResponse("New Task added and Task taker was informed by sending email.", true);
     }
 
-    public ApiResponse delete(UUID id) {
+    public ApiResponse delete(Integer id) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -103,5 +102,48 @@ public class TaskService {
         taskRepository.deleteById(id);
         return new ApiResponse("Task deleted", false);
 
+    }
+
+    public ApiResponse completeTask(Integer id, Integer taskStatus) {
+
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if (!optionalTask.isPresent())
+            return new ApiResponse("Such task id not found!", false);
+
+        TaskStatus status = TaskStatus.values()[taskStatus];
+        optionalTask.get().setStatus(status);
+
+        taskRepository.save(optionalTask.get());
+        return new ApiResponse("Task status updated!", true);
+
+    }
+
+    public ApiResponse checkEmployeeTask(UUID userId, TaskStatus status) {
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent())
+            return new ApiResponse("Invalid user Id!", false);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && !authentication.getPrincipal().equals("anonymousUser")) {
+            User user = (User) authentication.getPrincipal();
+            Set<Role> roles = user.getRoles();
+
+            boolean checkRoleStatus = false;
+            for (Role role : roles) {
+                if (role.getRoleName().name().equals("DIRECTOR") || role.getRoleName().name().equals("HR_MANAGER")) {
+                    checkRoleStatus = true;
+                    break;
+                }
+            }
+            if (!checkRoleStatus)
+                return new ApiResponse("You don't have access for this operation!", false);
+            List<Task> taskList = taskRepository.findAllByStatusAndTaskTaker(status, user);
+            if (taskList.size() == 0)
+                return new ApiResponse("There is not any task for this data!", false);
+            return new ApiResponse("Success!", true, taskList);
+        }
+        return new ApiResponse("Authorization empty!", false);
     }
 }

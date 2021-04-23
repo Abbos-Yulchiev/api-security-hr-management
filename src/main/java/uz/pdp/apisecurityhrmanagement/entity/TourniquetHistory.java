@@ -3,11 +3,12 @@ package uz.pdp.apisecurityhrmanagement.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,13 +24,10 @@ public class TourniquetHistory {
     @ManyToOne
     private Tourniquet tourniquet;      //TurniketHistory o'zida  tourniqetni saqlaydi
 
-    @CreationTimestamp
-    private Timestamp time;
-
     @NotNull
-    private LocalDateTime enterDateTime;   // Entrance time to work
+    private LocalDateTime presentTime;   // Entrance and Exit time to work
 
-    private LocalDateTime exitDateTime;    // Exit time from work
+    private boolean inOut;                //  For check In or out
 
     @ManyToOne
     private User user;                  // Tourniketga userni saqalsh uchun

@@ -43,14 +43,14 @@ public class TourniquetHistoryService {
 
         if (historyDTO.isGoingIn()) {
             if (!optionalTourniquet.get().isStatus())
-                return new ApiResponse("You using the tourniquet illegally!", false);
-            tourniquetHistory.setEnterDateTime(LocalDateTime.now());
-            optionalTourniquet.get().setStatus(true);
+                return new ApiResponse("You are using the tourniquet illegally!", false);
+            tourniquetHistory.setPresentTime(LocalDateTime.now());
+            tourniquetHistory.setInOut(true);
         } else {
             if (optionalTourniquet.get().isStatus())
-                return new ApiResponse("You using the tourniquet illegally!", false);
-            tourniquetHistory.setExitDateTime(LocalDateTime.now());
-            optionalTourniquet.get().setStatus(false);
+                return new ApiResponse("You are using the tourniquet illegally!", false);
+            tourniquetHistory.setPresentTime(LocalDateTime.now());
+            tourniquetHistory.setInOut(false);
         }
         tourniquetHistoryRepository.save(tourniquetHistory);
         return new ApiResponse("Input and output saved", true);
